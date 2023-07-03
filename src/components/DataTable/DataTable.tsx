@@ -1,7 +1,9 @@
-import persons from '../../sluzba.json';
 import './DataTable.scss';
 import { StylesProvider } from '@material-ui/core/styles';
 import useTableFunction from '../../hooks/useTableFunction';
+import persons from '../../sluzba.json';
+
+import dayjs, { Dayjs } from 'dayjs';
 import {
   TableContainer,
   Table,
@@ -12,38 +14,43 @@ import {
   TableCell,
   TablePagination,
   TableSortLabel,
+  TextField,
 } from '@mui/material';
 import { useState } from 'react';
+import { DatePickerInput } from '@mantine/dates';
 
-interface Person {
+export interface Person {
   id: number;
-  firstname: string;
+  firstName: string;
   lastName: string;
   dateOfBirth: string;
   function: string;
   experience: number;
 }
-
 export default function DataTable() {
-  const { page, rowsPerPage, handleChangeRowsPerPage, handleChangePage } =
-    useTableFunction();
-  const [order, setOrder] = useState<any>('asc');
-  const [orderBy, setOrderBy] = useState<keyof Person>();
+  const {
+    page,
+    rowsPerPage,
+    handleChangeRowsPerPage,
+    handleChangePage,
+    handleOrderChange,
+    order,
+    orderBy,
+    arraySort,
+    tableData,
+    filterData,
+    resetFilters,
+  } = useTableFunction();
 
-  // const handleSort = (property: keyof Person) => (event: any) => {
-  //   console.log(property);
-  //   const isAsc = orderBy === property && order === 'asc';
-  //   setOrder(isAsc ? 'desc' : 'asc');
-  //   setOrderBy(property);
-  // };
+  const [filters, setFilters] = useState({
+    id: '',
+    firstName: '',
+    lastName: '',
+    function: '',
+    experience: '',
+  });
 
-  // const arraySort = (a: Person, b: Person) => {
-  //   if (order === 'asc') {
-  //     return a[orderBy] > b[orderBy] ? 1 : -1;
-  //   } else {
-  //     return a[orderBy] < b[orderBy] ? 1 : -1;
-  //   }
-  // };
+  const [dateFilter, setDateFilter] = useState<Date>();
 
   return (
     <>
@@ -52,39 +59,73 @@ export default function DataTable() {
           <Table>
             <TableHead className="header">
               <TableRow>
-                {Object.keys(persons[0]).map((field) => (
-                  <TableCell>
-                    <TableSortLabel
-
-                    // active={orderBy === ''}
-                    // direction={orderBy === '' ? order : 'asc'}
-                    // onClick={handleSort(Object.keys(persons[0]))}
-                    >
-                      {field}
-                    </TableSortLabel>
-                  </TableCell>
-                ))}
+                {Object.keys(persons[0]).map((field) => {
+                  return (
+                    <TableCell key={field}>
+                      <TableSortLabel
+                        active={orderBy === field}
+                        direction={order}
+                        onClick={handleOrderChange(field as keyof Person)}
+                      >
+                        {field}
+                      </TableSortLabel>
+                      {field === 'dateOfBirth' ? (
+                        <DatePickerInput
+                          valueFormat="YYYY MMM DD"
+                          placeholder="Pick date"
+                          mx="auto"
+                          maw={400}
+                          value={dateFilter}
+                          onChange={(date) => filterData(field, date)}
+                        />
+                      ) : (
+                        <TextField
+                          size="small"
+                          value={filters[field as keyof Person]}
+                          onChange={(e) => {
+                            setFilters({
+                              ...filters,
+                              [field]: e.target.value,
+                            });
+                            filterData(field as keyof Person, e.target.value);
+                            if (e.target.value === '') {
+                              resetFilters();
+                            }
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             </TableHead>
             <TableBody>
-              {persons
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((person) => (
-                  <TableRow>
-                    <TableCell>{person.id}</TableCell>
-                    <TableCell>{person.firstName}</TableCell>
-                    <TableCell>{person.lastName}</TableCell>
-                    <TableCell>{person.dateOfBirth}</TableCell>
-                    <TableCell>{person.function}</TableCell>
-                    <TableCell>{person.experience}</TableCell>
-                  </TableRow>
-                ))}
+              {tableData.length > 0 ? (
+                tableData
+                  .sort((a, b) => {
+                    if (order === 'asc') {
+                      return a[orderBy] > b[orderBy] ? 1 : -1;
+                    } else {
+                      return a[orderBy] < b[orderBy] ? 1 : -1;
+                    }
+                  })
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((person) => (
+                    <TableRow key={person.id}>
+                      {Object.values(person).map((item, index) => (
+                        <TableCell key={`${item}-${index}`}>{item}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+              ) : (
+                <></>
+              )}
             </TableBody>
           </Table>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component={Paper}
-            count={persons.length}
+            count={tableData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
