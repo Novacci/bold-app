@@ -1,4 +1,20 @@
 .MuiTableContainer-root {
+  width: 80% !important;
   margin: 0 auto;
-  width: 60%;
+  color: #eaaffe;
+  .MuiToolbar-root {
+    background-color: #eaaffe;
+  }
+  .header {
+    background-color: #eaaffe;
+  }
+  table {
+    tbody {
+      tr {
+        td {
+          background-color: #eaaffe;
+        }
+      }
+    }
+  }
 }
