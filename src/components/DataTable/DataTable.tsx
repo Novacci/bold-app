@@ -3,7 +3,7 @@ import { StylesProvider } from '@material-ui/core/styles';
 import useTableFunction from '../../hooks/useTableFunction';
 import persons from '../../sluzba.json';
 
-import dayjs, { Dayjs } from 'dayjs';
+// import dayjs, { Dayjs } from 'dayjs';
 import {
   TableContainer,
   Table,
@@ -17,7 +17,8 @@ import {
   TextField,
 } from '@mui/material';
 import { useState } from 'react';
-import { DatePickerInput } from '@mantine/dates';
+import { DatePickerInput, DatesRangeValue } from '@mantine/dates';
+import moment from 'moment';
 
 export interface Person {
   id: number;
@@ -50,7 +51,7 @@ export default function DataTable() {
     experience: '',
   });
 
-  const [dateFilter, setDateFilter] = useState<Date>();
+  const [dateFilter, setDateFilter] = useState<DatesRangeValue>();
 
   return (
     <>
@@ -71,6 +72,7 @@ export default function DataTable() {
                       </TableSortLabel>
                       {field === 'dateOfBirth' ? (
                         <DatePickerInput
+                          type="range"
                           valueFormat="YYYY MMM DD"
                           placeholder="Pick date"
                           mx="auto"
@@ -83,9 +85,11 @@ export default function DataTable() {
                           size="small"
                           value={filters[field as keyof Person]}
                           onChange={(e) => {
-                            setFilters({
-                              ...filters,
-                              [field]: e.target.value,
+                            setFilters((prev) => {
+                              return {
+                                ...prev,
+                                [field]: e.target.value,
+                              };
                             });
                             filterData(field as keyof Person, e.target.value);
                             if (e.target.value === '') {
@@ -102,13 +106,7 @@ export default function DataTable() {
             <TableBody>
               {tableData.length > 0 ? (
                 tableData
-                  .sort((a, b) => {
-                    if (order === 'asc') {
-                      return a[orderBy] > b[orderBy] ? 1 : -1;
-                    } else {
-                      return a[orderBy] < b[orderBy] ? 1 : -1;
-                    }
-                  })
+                  .sort(arraySort)
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((person) => (
                     <TableRow key={person.id}>
