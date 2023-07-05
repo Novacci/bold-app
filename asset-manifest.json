@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/bold-app/static/css/main.66c49b23.css",
-    "main.js": "/bold-app/static/js/main.4e82c2c1.js",
+    "main.css": "/bold-app/static/css/main.37acfd41.css",
+    "main.js": "/bold-app/static/js/main.7d924d35.js",
     "static/js/787.28cb0dcd.chunk.js": "/bold-app/static/js/787.28cb0dcd.chunk.js",
+    "static/media/Silka-Regular.otf": "/bold-app/static/media/Silka-Regular.48b22692f3aeb1643a04.otf",
     "index.html": "/bold-app/index.html",
-    "main.66c49b23.css.map": "/bold-app/static/css/main.66c49b23.css.map",
-    "main.4e82c2c1.js.map": "/bold-app/static/js/main.4e82c2c1.js.map",
+    "main.37acfd41.css.map": "/bold-app/static/css/main.37acfd41.css.map",
+    "main.7d924d35.js.map": "/bold-app/static/js/main.7d924d35.js.map",
     "787.28cb0dcd.chunk.js.map": "/bold-app/static/js/787.28cb0dcd.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.66c49b23.css",
-    "static/js/main.4e82c2c1.js"
+    "static/css/main.37acfd41.css",
+    "static/js/main.7d924d35.js"
   ]
 }
