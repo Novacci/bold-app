@@ -1,20 +1,14 @@
+@font-face {
+  font-family: 'Silka';
+  src: url('../../Fonts/Silka-Regular.otf');
+}
+
+* {
+  font-family: 'Silka';
+  font-weight: bold;
+}
+
 .MuiTableContainer-root {
   width: 80% !important;
   margin: 0 auto;
-  color: #eaaffe;
-  .MuiToolbar-root {
-    background-color: #eaaffe;
-  }
-  .header {
-    background-color: #eaaffe;
-  }
-  table {
-    tbody {
-      tr {
-        td {
-          background-color: #eaaffe;
-        }
-      }
-    }
-  }
 }

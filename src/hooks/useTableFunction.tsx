@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Person } from '../components/DataTable/DataTable';
 import persons from '../sluzba.json';
 import moment from 'moment';
+import { DatesRangeValue } from '@mantine/dates';
 
 export default function useTableFunction() {
   const [page, setPage] = useState(0);
@@ -9,6 +10,14 @@ export default function useTableFunction() {
   const [orderBy, setOrderBy] = useState<keyof Person>('id');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [tableData, setTableData] = useState<Person[]>(persons);
+  const [dateFilter, setDateFilter] = useState<DatesRangeValue>();
+  const [filters, setFilters] = useState({
+    id: '',
+    firstName: '',
+    lastName: '',
+    function: '',
+    experience: '',
+  });
 
   const handleOrderChange = (property: keyof Person) => (event: any) => {
     setOrder(order === 'asc' ? 'desc' : 'asc');
@@ -71,6 +80,12 @@ export default function useTableFunction() {
 
   const resetFilters = () => setTableData(persons);
 
+  const camelToHumanReadable = (camelCase) => {
+    let result = camelCase.replace(/([A-Z])/g, ' $1');
+    result = result.charAt(0).toUpperCase() + result.slice(1).toLowerCase();
+    return result;
+  };
+
   return {
     page,
     rowsPerPage,
@@ -83,5 +98,9 @@ export default function useTableFunction() {
     tableData,
     filterData,
     resetFilters,
+    filters,
+    dateFilter,
+    setFilters,
+    camelToHumanReadable,
   };
 }

@@ -2,8 +2,6 @@ import './DataTable.scss';
 import { StylesProvider } from '@material-ui/core/styles';
 import useTableFunction from '../../hooks/useTableFunction';
 import persons from '../../sluzba.json';
-
-// import dayjs, { Dayjs } from 'dayjs';
 import {
   TableContainer,
   Table,
@@ -14,11 +12,9 @@ import {
   TableCell,
   TablePagination,
   TableSortLabel,
-  TextField,
 } from '@mui/material';
-import { useState } from 'react';
-import { DatePickerInput, DatesRangeValue } from '@mantine/dates';
-import moment from 'moment';
+import { DatePickerInput } from '@mantine/dates';
+import { TextInput, Flex, Text } from '@mantine/core';
 
 export interface Person {
   id: number;
@@ -41,63 +37,60 @@ export default function DataTable() {
     tableData,
     filterData,
     resetFilters,
+    filters,
+    dateFilter,
+    setFilters,
+    camelToHumanReadable,
   } = useTableFunction();
-
-  const [filters, setFilters] = useState({
-    id: '',
-    firstName: '',
-    lastName: '',
-    function: '',
-    experience: '',
-  });
-
-  const [dateFilter, setDateFilter] = useState<DatesRangeValue>();
 
   return (
     <>
       <StylesProvider injectFirst>
         <TableContainer component={Paper}>
           <Table>
-            <TableHead className="header">
+            <TableHead>
               <TableRow>
                 {Object.keys(persons[0]).map((field) => {
                   return (
-                    <TableCell key={field}>
-                      <TableSortLabel
-                        active={orderBy === field}
-                        direction={order}
-                        onClick={handleOrderChange(field as keyof Person)}
-                      >
-                        {field}
-                      </TableSortLabel>
-                      {field === 'dateOfBirth' ? (
-                        <DatePickerInput
-                          type="range"
-                          valueFormat="YYYY MMM DD"
-                          placeholder="Pick date"
-                          mx="auto"
-                          maw={400}
-                          value={dateFilter}
-                          onChange={(date) => filterData(field, date)}
-                        />
-                      ) : (
-                        <TextField
-                          size="small"
-                          value={filters[field as keyof Person]}
-                          onChange={(e) => {
-                            setFilters((prev) => {
-                              return {
-                                ...prev,
-                                [field]: e.target.value,
-                              };
-                            });
-                            filterData(field as keyof Person, e.target.value);
-                            if (e.target.value === '') {
-                              resetFilters();
-                            }
+                    <TableCell key={field} width={200}>
+                      <Flex direction="column">
+                        <TableSortLabel
+                          active={orderBy === field}
+                          direction={order}
+                          onClick={handleOrderChange(field as keyof Person)}
+                          sx={{
+                            flexDirection: 'row',
                           }}
-                        />
-                      )}
+                        >
+                          {camelToHumanReadable(field)}
+                        </TableSortLabel>
+                        {field === 'dateOfBirth' ? (
+                          <DatePickerInput
+                            type="range"
+                            placeholder="Pick date..."
+                            clearable
+                            value={dateFilter}
+                            onChange={(date) => filterData(field, date)}
+                          />
+                        ) : (
+                          <TextInput
+                            value={filters[field as keyof Person]}
+                            placeholder="Search..."
+                            onChange={(e) => {
+                              setFilters((prev) => {
+                                return {
+                                  ...prev,
+                                  [field]: e.target.value,
+                                };
+                              });
+                              filterData(field as keyof Person, e.target.value);
+                              if (e.target.value === '') {
+                                resetFilters();
+                              }
+                            }}
+                          />
+                        )}
+                      </Flex>
                     </TableCell>
                   );
                 })}
@@ -116,7 +109,9 @@ export default function DataTable() {
                     </TableRow>
                   ))
               ) : (
-                <></>
+                <Flex align="center" justify="center" w="600%" h={200}>
+                  <Text weight={400}>No available data</Text>
+                </Flex>
               )}
             </TableBody>
           </Table>
