@@ -1,6 +1,6 @@
 # Bold App
 
-[Live demo]([https://novacci.github.io/covid-stats/)
+[Live demo](https://novacci.github.io/covid-stats/)
 
 "Bold-app" is an app created to display information about employees. 
 It was created using Typescript, React, Scss, and Material UI.
